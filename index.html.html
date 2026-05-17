@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>aumentto — Briefing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh}
+
+/* HEADER */
+.hdr{background:#0a0a0a;padding:24px 16px 20px;text-align:center}
+.logo{font-family:'Comfortaa',sans-serif;font-size:26px;font-weight:300;letter-spacing:.06em;color:#fff}
+.logo-sub{font-size:10px;color:#444;margin-top:5px;letter-spacing:.16em;text-transform:uppercase}
+
+/* PROGRESS */
+.prog-wrap{background:#111;height:3px}
+.prog-bar{height:3px;background:#fff;transition:width .3s}
+
+/* STEPS */
+.pg{display:none;max-width:600px;margin:0 auto;padding:20px 16px 80px}
+.pg.on{display:block}
+
+/* STEP DOTS */
+.dots{display:flex;align-items:center;gap:6px;margin-bottom:20px}
+.dot{width:7px;height:7px;border-radius:50%;background:#e4e4e4;transition:all .2s}
+.dot.done{background:#1D9E75}
+.dot.here{background:#1a1a1a;width:18px;border-radius:4px}
+.dot-lbl{font-size:12px;color:#888;margin-left:4px}
+
+/* PACKAGE CARDS */
+.pkg-hero{text-align:center;margin-bottom:20px}
+.pkg-hero h2{font-size:20px;font-weight:600;margin-bottom:6px;line-height:1.3}
+.pkg-hero p{font-size:13px;color:#666;line-height:1.5}
+.pkg-list{display:flex;flex-direction:column;gap:10px}
+.pkc{background:#fff;border:2px solid #e4e4e4;border-radius:12px;padding:16px;cursor:pointer;transition:border-color .15s,background .15s;-webkit-tap-highlight-color:transparent;user-select:none}
+.pkc:active{opacity:.85}
+.pkc.on{border-color:#1a1a1a;background:#1a1a1a}
+.pkc .row{display:flex;align-items:flex-start;gap:12px}
+.pkc .num{min-width:28px;height:28px;border-radius:6px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#888;flex-shrink:0;margin-top:2px}
+.pkc.on .num{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
+.pkc .info{flex:1}
+.pkc .name{font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:2px}
+.pkc.on .name{color:#fff}
+.pkc .desc{font-size:12px;color:#888;margin-bottom:8px}
+.pkc.on .desc{color:rgba(255,255,255,.6)}
+.pkc .tags{display:flex;flex-wrap:wrap;gap:4px}
+.pkc .tag{font-size:11px;background:#f5f5f5;color:#888;padding:2px 8px;border-radius:20px}
+.pkc.on .tag{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.pkc .chk{width:20px;height:20px;border-radius:50%;border:2px solid #e4e4e4;flex-shrink:0;margin-top:4px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.pkc.on .chk{background:#fff;border-color:#fff;color:#1a1a1a;font-size:11px;font-weight:700}
+
+/* SECTIONS */
+.sec{background:#fff;border:1px solid #e4e4e4;border-radius:12px;padding:18px 16px;margin-bottom:12px}
+.sec-ttl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#888;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* FIELDS */
+.fld{margin-bottom:16px}
+.fld:last-child{margin-bottom:0}
+.lbl{display:block;font-size:14px;font-weight:500;margin-bottom:5px}
+.req{color:#E53935;margin-left:1px}
+.hint{font-size:12px;color:#aaa;margin-bottom:6px;line-height:1.5}
+input[type=text],input[type=email],input[type=tel],input[type=url],textarea,select{
+  width:100%;border:1.5px solid #e4e4e4;border-radius:8px;
+  padding:12px 14px;font-size:16px;color:#1a1a1a;background:#fff;
+  outline:none;transition:border-color .15s;font-family:inherit;resize:vertical
+}
+input:focus,textarea:focus{border-color:#1a1a1a}
+textarea{min-height:88px;line-height:1.5}
+
+/* OPTION BUTTONS */
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts.row{flex-direction:row;flex-wrap:wrap}
+.opt{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 14px;border:1.5px solid #e4e4e4;border-radius:8px;
+  cursor:pointer;font-size:14px;color:#1a1a1a;
+  user-select:none;-webkit-tap-highlight-color:transparent;
+  min-height:48px;transition:border-color .12s,background .12s
+}
+.opt:active{opacity:.8}
+.opt input{display:none}
+.ob{width:18px;height:18px;border:1.5px solid #ccc;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.ob.sq{border-radius:5px}
+.opt.on{border-color:#1a1a1a;background:#f7f7f7}
+.opt.on .ob{background:#1a1a1a;border-color:#1a1a1a}
+.opt.on .ob::after{content:'';display:block;width:7px;height:7px;background:#fff;border-radius:50%}
+.opt.on .ob.sq::after{border-radius:2px}
+
+/* COLOR SWATCHES */
+.swatches{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.sw{width:36px;height:36px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;position:relative;-webkit-tap-highlight-color:transparent}
+.sw.on{border-color:#1a1a1a}
+.sw.on::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+
+/* ADS CARDS */
+.ads{display:flex;flex-direction:column;gap:10px}
+.adc{border:2px solid #e4e4e4;border-radius:10px;padding:14px;cursor:pointer;display:flex;gap:12px;align-items:flex-start;transition:all .15s;-webkit-tap-highlight-color:transparent;user-select:none}
+.adc:active{opacity:.8}
+.adc.on{border-color:#1878C8;background:#EEF5FF}
+.adc .icon{font-size:24px;flex-shrink:0;line-height:1.2}
+.adc .aname{font-size:14px;font-weight:600;margin-bottom:2px}
+.adc .adesc{font-size:12px;color:#888;line-height:1.4}
+
+/* CONDITIONAL */
+.cond{display:none;margin-top:10px;padding:14px;background:#f5f5f5;border-radius:10px;border-left:3px solid #1878C8}
+.cond.on{display:block}
+.cond-lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1878C8;margin-bottom:12px}
+
+/* NOTICE */
+.notice{border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.5;margin-bottom:12px}
+.notice-blue{background:#EEF5FF;color:#0d4a8a}
+.notice-warn{background:#FAEEDA;color:#633806}
+.notice-purple{background:#EEEDFE;color:#26215C}
+
+/* RESUMO */
+#resumo p{font-size:13px;color:#666;padding:5px 0;border-bottom:1px solid #f5f5f5;line-height:1.5}
+#resumo p:last-child{border-bottom:none}
+#resumo strong{color:#1a1a1a;font-weight:600;display:inline-block;min-width:130px}
+
+/* BUTTONS */
+.nav{display:flex;gap:10px;margin-top:20px}
+.btn{padding:14px 20px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;min-height:52px;-webkit-tap-highlight-color:transparent}
+.btn:active{opacity:.85;transform:scale(.98)}
+.btn-back{background:#fff;color:#888;border:1.5px solid #e4e4e4;flex-shrink:0}
+.btn-next{background:#1a1a1a;color:#fff;flex:1}
+.btn-next:disabled{background:#ccc;cursor:not-allowed}
+.btn-submit{background:#1D9E75;color:#fff;flex:1}
+.btn-submit:disabled{background:#ccc;cursor:not-allowed}
+
+/* SUCCESS */
+.success{display:none;max-width:480px;margin:48px auto;padding:40px 24px;background:#fff;border:1px solid #e4e4e4;border-radius:16px;text-align:center}
+.ok-icon{font-size:56px;margin-bottom:16px}
+.success h2{font-size:22px;font-weight:700;color:#1D9E75;margin-bottom:10px}
+.success p{font-size:14px;color:#666;line-height:1.7}
+
+@media(min-width:600px){
+  .pg{padding:28px 24px 80px}
+  .pkg-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .ads{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  input[type=text],input[type=email],input[type=tel],input[type=url],textarea{font-size:14px}
+  .opt{font-size:13px}
+  .nav{justify-content:flex-end}
+  .btn-next,.btn-submit{flex:0 0 auto;padding:14px 32px}
+}
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+
+<!-- ══ TALLY SETUP BANNER (remova após configurar) ══ -->
+
+<div class="hdr">
+  <div class="logo">aumentto</div>
+  <div class="logo-sub">formulário de briefing</div>
+</div>
+<div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+
+<!-- ════ STEP 1 — PACOTE ════ -->
+<div class="pg on" id="pg1">
+  <div class="pkg-hero">
+    <h2>Qual pacote você tem interesse?</h2>
+    <p>Selecione o pacote e preencheremos o briefing certo para o seu momento.</p>
+  </div>
+  <div class="pkg-list">
+
+    <div class="pkc" id="pk1" onclick="selPkg('1',this)">
+      <div class="row">
+        <div class="num">01</div>
+        <div class="info">
+          <div class="name">Identidade Express</div>
+          <div class="desc">Logo profissional em 48h</div>
+          <div class="tags">
+            <span class="tag">✓ Logotipo</span>
+            <span class="tag">✓ Paleta de cores</span>
+            <span class="tag">✓ Tipografia</span>
+            <span class="tag">✓ Arquivos PNG + PDF</span>
+          </div>
+        </div>
+        <div class="chk" id="chk1"></div>
+      </div>
+    </div>
+
+    <div class="pkc" id="pk2" onclick="selPkg('2',this)">
+      <div class="row">
+        <div class="num">02</div>
+        <div class="info">
+          <div class="name">Presença Digital</div>
+          <div class="desc">Apareça e seja encontrado</div>
+          <div class="tags">
+            <span class="tag">✓ Identidade visual</span>
+            <span class="tag">✓ Templates Canva</span>
+            <span class="tag">✓ Google Meu Negócio</span>
+            <span class="tag">✓ Bio otimizada</span>
+          </div>
+        </div>
+        <div class="chk" id="chk2"></div>
+      </div>
+    </div>
+
+    <div class="pkc" id="pk3" onclick="selPkg('3',this)">
+      <div class="row">
+        <div class="num">03</div>
+        <div class="info">
+          <div class="name">Autoridade Digital</div>
+          <div class="desc">Estratégia + anúncios no ar</div>
+          <div class="tags">
+            <span class="tag">✓ Posicionamento</span>
+            <span class="tag">✓ Meta Ads</span>
+            <span class="tag">✓ Google Ads</span>
+            <span class="tag">✓ Campanha na entrega</span>
+          </div>
+        </div>
+        <div class="chk" id="chk3"></div>
+      </div>
+    </div>
+
+    <div class="pkc" id="pk4" onclick="selPkg('4',this)">
+      <div class="row">
+        <div class="num">04</div>
+        <div class="info">
+          <div class="name">Gestão de Tráfego</div>
+          <div class="desc">Resultados crescentes mês a mês</div>
+          <div class="tags">
+            <span class="tag">✓ Meta Ads</span>
+            <span class="tag">✓ Google Ads</span>
+            <span class="tag">✓ 1 criativo/mês</span>
+            <span class="tag">✓ Relatório mensal</span>
+          </div>
+        </div>
+        <div class="chk" id="chk4"></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="nav" style="margin-top:20px">
+    <button class="btn btn-next" id="btn1" onclick="ir(2)" disabled>Continuar →</button>
+  </div>
+</div>
+
+<!-- ════ STEP 2 — DADOS BÁSICOS ════ -->
+<div class="pg" id="pg2">
+  <div class="dots">
+    <div class="dot done"></div><div class="dot here"></div><div class="dot"></div><div class="dot"></div>
+    <span class="dot-lbl">Informações básicas</span>
+  </div>
+  <div class="sec">
+    <div class="sec-ttl"><span class="sec-dot" style="background:#1a1a1a"></span>Sobre você</div>
+    <div class="fld"><label class="lbl">Nome completo <span class="req">*</span></label><input type="text" id="f-nome" placeholder="Ex: Maria Oliveira"></div>
+    <div class="fld"><label class="lbl">Nome do negócio <span class="req">*</span></label><input type="text" id="f-neg" placeholder="Ex: Bella Salão de Beleza"></div>
+    <div class="fld"><label class="lbl">WhatsApp <span class="req">*</span></label><input type="tel" id="f-wp" placeholder="(11) 99999-9999"></div>
+    <div class="fld"><label class="lbl">Email <span class="req">*</span></label><input type="email" id="f-email" placeholder="seu@email.com"></div>
+    <div class="fld"><label class="lbl">Cidade e estado</label><input type="text" id="f-cidade" placeholder="Ex: São Paulo — SP"></div>
+    <div class="fld"><label class="lbl">Ramo / segmento</label><input type="text" id="f-seg" placeholder="Ex: Salão de beleza, Eletricista, Confeitaria..."></div>
+    <div class="fld">
+      <label class="lbl">Há quanto tempo o negócio existe?</label>
+      <div class="opts row">
+        <div class="opt" onclick="radio(this,'tempo')"><div class="ob"></div>Ainda não abri</div>
+        <div class="opt" onclick="radio(this,'tempo')"><div class="ob"></div>Menos de 1 ano</div>
+        <div class="opt" onclick="radio(this,'tempo')"><div class="ob"></div>1 a 3 anos</div>
+        <div class="opt" onclick="radio(this,'tempo')"><div class="ob"></div>Mais de 3 anos</div>
+      </div>
+    </div>
+    <div class="fld">
+      <label class="lbl">Como ficou sabendo da aumentto?</label>
+      <div class="opts row">
+        <div class="opt" onclick="radio(this,'origem')"><div class="ob"></div>Instagram</div>
+        <div class="opt" onclick="radio(this,'origem')"><div class="ob"></div>Indicação</div>
+        <div class="opt" onclick="radio(this,'origem')"><div class="ob"></div>Google</div>
+        <div class="opt" onclick="radio(this,'origem')"><div class="ob"></div>WhatsApp</div>
+        <div class="opt" onclick="radio(this,'origem')"><div class="ob"></div>Outro</div>
+      </div>
+    </div>
+  </div>
+  <div class="nav"><button class="btn btn-back" onclick="ir(1)">← Voltar</button><button class="btn btn-next" onclick="ir3()">Continuar →</button></div>
+</div>
+
+<!-- ════ STEP 3 — PACOTE ESPECÍFICO ════ -->
+<div class="pg" id="pg3">
+  <div class="dots">
+    <div class="dot done"></div><div class="dot done"></div><div class="dot here"></div><div class="dot"></div>
+    <span class="dot-lbl" id="lbl3">Detalhes</span>
+  </div>
+
+  <!-- PKG 1 -->
+  <div id="f1" style="display:none">
+    <div class="sec">
+      <div class="sec-ttl"><span class="sec-dot" style="background:#1a1a1a"></span>Seu negócio</div>
+      <div class="fld"><label class="lbl">O que você vende ou oferece? <span class="req">*</span></label><div class="hint">Serviços, produtos, diferenciais, forma de atendimento.</div><textarea id="p1_servicos" placeholder="Ex: Corte, escova, coloração. Especialidade em cabelos cacheados. Atendimento com hora marcada."></textarea></div>
+      <div class="fld"><label class="lbl">Quem é seu cliente ideal? <span class="req">*</span></label><div class="hint">Idade, gênero, o que busca, o que sente.</div><textarea id="p1_cliente" placeholder="Ex: Mulheres de 25 a 45 anos que valorizam qualidade e atendimento atencioso..."></textarea></div>
+      <div class="fld"><label class="lbl">Qual seu maior diferencial? <span class="req">*</span></label><textarea id="p1_diferencial" placeholder="Por que o cliente te escolhe e não o concorrente?"></textarea></div>
+      <div class="fld">
+        <label class="lbl">Faixa de preço que você pratica</label>
+        <div class="opts">
+          <div class="opt" onclick="radio(this,'p1_preco')"><div class="ob"></div>Popular — até R$ 100</div>
+          <div class="opt" onclick="radio(this,'p1_preco')"><div class="ob"></div>Intermediário — R$ 100 a R$ 300</div>
+          <div class="opt" onclick="radio(this,'p1_preco')"><div class="ob"></div>Premium — acima de R$ 300</div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-ttl"><span class="sec-dot" style="background:#1a1a1a"></span>Identidade visual</div>
+      <div class="fld">
+        <label class="lbl">Você já tem identidade visual?</label>
+        <div class="opts">
+          <div class="opt" onclick="radio(this,'p1_temlogo')"><div class="ob"></div>Não, zero — criar do zero</div>
+          <div class="opt" onclick="radio(this,'p1_temlogo')"><div class="ob"></div>Tenho algo mas quero mudar tudo</div>
+          <div class="opt" onclick="radio(this,'p1_temlogo')"><div class="ob"></div>Tenho logo, quero só ajustar</div>
+        </div>
+      </div>
+      <div class="fld">
+        <label class="lbl">Estilo visual que combina com o negócio <span class="req">*</span></label>
+        <div class="opts">
+          <div class="opt" onclick="radio(this,'p1_estilo')"><div class="ob"></div>Moderno e minimalista — limpo, sem exagero</div>
+          <div class="opt" onclick="radio(this,'p1_estilo')"><div class="ob"></div>Clássico e elegante — sofisticado, atemporal</div>
+          <div class="opt" onclick="radio(this,'p1_estilo')"><div class="ob"></div>Divertido e colorido — jovem, descontraído</div>
+          <div class="opt" onclick="radio(this,'p1_estilo')"><div class="ob"></div>Rústico e artesanal — natural, feito à mão</div>
+          <div class="opt" onclick="radio(this,'p1_estilo')"><div class="ob"></div>Forte e confiante — autoridade, solidez</div>
+        </div>
+      </div>
+      <div class="fld">
+        <label class="lbl">Cores que você GOSTA para a marca</label>
+        <div class="hint">Toque para selecionar até 3.</div>
+        <div class="swatches">
+          <div class="sw" data-cor="Preto" style="background:#1a1a1a" onclick="cor(this)"></div>
+          <div class="sw" data-cor="Branco" style="background:#fff;border-color:#ddd" onclick="cor(this)"></div>
+          <div class="sw" data-cor="Terracota" style="background:#c8714a" onclick="cor(this)"></div>
+          <div class="sw" data-cor="Rosa" style="background:#E8A0A0" onclick="cor(this)"></div>
+          <div class="sw" data-cor="Azul" style="background:#1878C8" onclick="cor(this)"></div>
+          <div class="sw" data-cor="Verde" style="background:#1D9E75" onclick="cor(this)"></div>
+          <div class="sw" data-cor="Amarelo" style="background:#F5C518" onclick="cor(this)"></div>
+          <div class="sw" data-cor="Roxo" style="background:#534AB7" onclick="cor(this)"></div>
+          <div class="sw" data-cor="Marrom" style="background:#8B4513" onclick="cor(this)"></div>
+          <div class="sw" data-cor="Lilás" style="background:#D4A0C0" onclick="cor(this)"></div>
+          <div class="sw" data-cor="Laranja" style="background:#FF6B35" onclick="cor(this)"></div>
+          <div class="sw" data-cor="Azul escuro" style="background:#2C3E50" onclick="cor(this)"></div>
+        </div>
+      </div>
+      <div class="fld"><label class="lbl">Cores que você NÃO quer</label><input type="text" id="p1_cores_nao" placeholder="Ex: vermelho forte, laranja néon..."></div>
+      <div class="fld"><label class="lbl">3 marcas que você admira visualmente <span class="req">*</span></label><div class="hint">Qualquer segmento — importa o estilo.</div><textarea id="p1_refs" placeholder="Ex: Apple (minimalismo), Natura (natural), Nike (força). O que gosta em cada uma?"></textarea></div>
+      <div class="fld"><label class="lbl">O que você NÃO quer no logo?</label><textarea id="p1_nao" placeholder="Ex: nada de tesoura, sem fontes cursivas, sem flores..."></textarea></div>
+      <div class="fld"><label class="lbl">Se sua marca fosse uma pessoa, como seria?</label><div class="hint">Personalidade, não aparência.</div><textarea id="p1_pessoa" placeholder="Ex: mulher de 35 anos, sofisticada mas acessível, transmite cuidado e confiança..."></textarea></div>
+      <div class="fld">
+        <label class="lbl">Onde o logo será usado? <span class="req">*</span></label>
+        <div class="opts row">
+          <div class="opt" onclick="check(this,'p1_uso')"><div class="ob sq"></div>Instagram</div>
+          <div class="opt" onclick="check(this,'p1_uso')"><div class="ob sq"></div>WhatsApp</div>
+          <div class="opt" onclick="check(this,'p1_uso')"><div class="ob sq"></div>Cartão de visita</div>
+          <div class="opt" onclick="check(this,'p1_uso')"><div class="ob sq"></div>Banner / fachada</div>
+          <div class="opt" onclick="check(this,'p1_uso')"><div class="ob sq"></div>Embalagem</div>
+          <div class="opt" onclick="check(this,'p1_uso')"><div class="ob sq"></div>Site</div>
+        </div>
+      </div>
+      <div class="fld"><label class="lbl">Link de referência (Pinterest, Instagram...)</label><input type="url" id="p1_link" placeholder="https://"></div>
+      <div class="fld"><label class="lbl">Algo mais que devo saber?</label><textarea id="p1_extra" placeholder="História, valores, concorrentes..."></textarea></div>
+    </div>
+  </div>
+
+  <!-- PKG 2 -->
+  <div id="f2" style="display:none">
+    <div class="sec">
+      <div class="sec-ttl"><span class="sec-dot" style="background:#1D9E75"></span>Seu negócio</div>
+      <div class="fld"><label class="lbl">O que você vende ou oferece? <span class="req">*</span></label><textarea id="p2_servicos" placeholder="Liste serviços, produtos, diferenciais, forma de atendimento."></textarea></div>
+      <div class="fld"><label class="lbl">Quem é seu cliente ideal? <span class="req">*</span></label><div class="hint">Idade, gênero, onde mora, o que busca, renda.</div><textarea id="p2_cliente" placeholder="Ex: Mulheres de 28 a 45 anos, classe B/C, que buscam praticidade..."></textarea></div>
+      <div class="fld"><label class="lbl">Qual seu maior diferencial? <span class="req">*</span></label><textarea id="p2_diferencial" placeholder="Por que o cliente te escolhe?"></textarea></div>
+      <div class="fld">
+        <label class="lbl">Forma de atendimento</label>
+        <div class="opts row">
+          <div class="opt" onclick="radio(this,'p2_atend')"><div class="ob"></div>Só presencial</div>
+          <div class="opt" onclick="radio(this,'p2_atend')"><div class="ob"></div>Só online</div>
+          <div class="opt" onclick="radio(this,'p2_atend')"><div class="ob"></div>Presencial e online</div>
+          <div class="opt" onclick="radio(this,'p2_atend')"><div class="ob"></div>Delivery / domicílio</div>
+        </div>
+      </div>
+      <div class="fld"><label class="lbl">Horário de funcionamento <span class="req">*</span></label><textarea id="p2_horario" style="min-height:60px" placeholder="Ex: Seg–Sex: 9h–19h | Sáb: 8h–17h | Dom: fechado"></textarea></div>
+      <div class="fld"><label class="lbl">Endereço (se tiver ponto físico)</label><input type="text" id="p2_end" placeholder="Rua, número, bairro, cidade, CEP"></div>
+      <div class="fld"><label class="lbl">Site ou agendamento (se tiver)</label><input type="url" id="p2_site" placeholder="https://"></div>
+    </div>
+    <div class="sec">
+      <div class="sec-ttl"><span class="sec-dot" style="background:#1D9E75"></span>Identidade visual</div>
+      <div class="fld">
+        <label class="lbl">Você já tem logo? <span class="req">*</span></label>
+        <div class="opts">
+          <div class="opt" onclick="radio(this,'p2_logo')"><div class="ob"></div>Não tenho — criar do zero</div>
+          <div class="opt" onclick="radio(this,'p2_logo')"><div class="ob"></div>Tenho algo básico mas quero melhorar</div>
+          <div class="opt" onclick="radio(this,'p2_logo')"><div class="ob"></div>Tenho logo — só aplicar nos materiais</div>
+        </div>
+      </div>
+      <div class="fld">
+        <label class="lbl">Estilo visual que combina</label>
+        <div class="opts">
+          <div class="opt" onclick="radio(this,'p2_estilo')"><div class="ob"></div>Moderno e minimalista</div>
+          <div class="opt" onclick="radio(this,'p2_estilo')"><div class="ob"></div>Clássico e elegante</div>
+          <div class="opt" onclick="radio(this,'p2_estilo')"><div class="ob"></div>Divertido e colorido</div>
+          <div class="opt" onclick="radio(this,'p2_estilo')"><div class="ob"></div>Rústico e artesanal</div>
+          <div class="opt" onclick="radio(this,'p2_estilo')"><div class="ob"></div>Forte e confiante</div>
+        </div>
+      </div>
+      <div class="fld"><label class="lbl">Cores e referências visuais</label><textarea id="p2_cores" style="min-height:60px" placeholder="Ex: azul escuro e dourado. Referência: perfil da marca X."></textarea></div>
+    </div>
+    <div class="sec">
+      <div class="sec-ttl"><span class="sec-dot" style="background:#1D9E75"></span>Instagram e Google</div>
+      <div class="fld"><label class="lbl">@ do Instagram atual (se tiver)</label><input type="text" id="p2_ig" placeholder="@seuperfil"></div>
+      <div class="fld"><label class="lbl">Como quer que a bio descreva o negócio? <span class="req">*</span></label><div class="hint">Fale livremente — adaptamos para texto estratégico.</div><textarea id="p2_bio" placeholder="Ex: Faço bolos artesanais para festas. Ingredientes naturais, entrego em SP..."></textarea></div>
+      <div class="fld"><label class="lbl">Quais destaques quer no perfil? <span class="req">*</span></label><div class="hint">Até 5. Ex: Serviços, Depoimentos, Fotos, Promoções, Contato.</div><input type="text" id="p2_dest" placeholder="Ex: Serviços, Cardápio, Entregas, Depoimentos, Contato"></div>
+      <div class="fld">
+        <label class="lbl">Para onde o link da bio deve apontar?</label>
+        <div class="opts row">
+          <div class="opt" onclick="radio(this,'p2_link')"><div class="ob"></div>WhatsApp</div>
+          <div class="opt" onclick="radio(this,'p2_link')"><div class="ob"></div>Site</div>
+          <div class="opt" onclick="radio(this,'p2_link')"><div class="ob"></div>Cardápio</div>
+          <div class="opt" onclick="radio(this,'p2_link')"><div class="ob"></div>Agendamento</div>
+          <div class="opt" onclick="radio(this,'p2_link')"><div class="ob"></div>Linktree</div>
+        </div>
+      </div>
+      <div class="fld">
+        <label class="lbl">Você tem fotos do negócio?</label>
+        <div class="opts">
+          <div class="opt" onclick="radio(this,'p2_fotos')"><div class="ob"></div>Sim, tenho boas fotos</div>
+          <div class="opt" onclick="radio(this,'p2_fotos')"><div class="ob"></div>Tenho algumas (não ótimas)</div>
+          <div class="opt" onclick="radio(this,'p2_fotos')"><div class="ob"></div>Não tenho</div>
+        </div>
+      </div>
+      <div class="fld">
+        <label class="lbl">Tipos de conteúdo para os templates</label>
+        <div class="opts row">
+          <div class="opt" onclick="check(this,'p2_tmpl')"><div class="ob sq"></div>Dica educativa</div>
+          <div class="opt" onclick="check(this,'p2_tmpl')"><div class="ob sq"></div>Post de venda</div>
+          <div class="opt" onclick="check(this,'p2_tmpl')"><div class="ob sq"></div>Depoimento</div>
+          <div class="opt" onclick="check(this,'p2_tmpl')"><div class="ob sq"></div>Promoção</div>
+          <div class="opt" onclick="check(this,'p2_tmpl')"><div class="ob sq"></div>Institucional</div>
+          <div class="opt" onclick="check(this,'p2_tmpl')"><div class="ob sq"></div>Antes e depois</div>
+        </div>
+      </div>
+      <div class="fld"><label class="lbl">Email Google do negócio <span class="req">*</span></label><div class="hint">Para configurar o Google Meu Negócio na sua conta.</div><input type="email" id="p2_gemail" placeholder="email@gmail.com"></div>
+      <div class="fld">
+        <label class="lbl">Você já tem perfil no Google Meu Negócio?</label>
+        <div class="opts">
+          <div class="opt" onclick="radio(this,'p2_gmn')"><div class="ob"></div>Não tenho</div>
+          <div class="opt" onclick="radio(this,'p2_gmn')"><div class="ob"></div>Tenho mas incompleto</div>
+          <div class="opt" onclick="radio(this,'p2_gmn')"><div class="ob"></div>Tenho e está ok</div>
+        </div>
+      </div>
+      <div class="fld">
+        <label class="lbl">Situação do endereço</label>
+        <div class="opts">
+          <div class="opt" onclick="radio(this,'p2_endereco')"><div class="ob"></div>Tenho loja / consultório físico</div>
+          <div class="opt" onclick="radio(this,'p2_endereco')"><div class="ob"></div>Trabalho em casa (endereço privado)</div>
+          <div class="opt" onclick="radio(this,'p2_endereco')"><div class="ob"></div>Atendo a domicílio / delivery</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PKG 3 -->
+  <div id="f3" style="display:none">
+    <div class="sec">
+      <div class="sec-ttl"><span class="sec-dot" style="background:#1878C8"></span>Negócio e posicionamento</div>
+      <div class="fld"><label class="lbl">O que você vende / oferece? <span class="req">*</span></label><textarea id="p3_servicos" placeholder="Descreva em detalhes — o que mais quer vender, diferenciais."></textarea></div>
+      <div class="fld"><label class="lbl">Preço médio do principal produto/serviço</label><input type="text" id="p3_preco" placeholder="Ex: R$ 150 por sessão / R$ 500 o pacote com 4"></div>
+      <div class="fld"><label class="lbl">Descreva seu cliente ideal com detalhes <span class="req">*</span></label><div class="hint">Idade, gênero, cidade, o que faz, o que sente, o que busca, renda.</div><textarea id="p3_cliente" style="min-height:110px" placeholder="Ex: Mulheres de 28 a 45 anos, trabalhadoras, preocupadas com aparência, classe B, renda R$4k–8k..."></textarea></div>
+      <div class="fld"><label class="lbl">Qual a principal dor que você resolve? <span class="req">*</span></label><textarea id="p3_dor" placeholder="Ex: Pele com oleosidade e manchas que não somem com produtos caseiros."></textarea></div>
+      <div class="fld"><label class="lbl">Por que te escolher e não o concorrente? <span class="req">*</span></label><textarea id="p3_dif" placeholder="Ex: Produtos importados, hora marcada, resultado em 1 sessão."></textarea></div>
+      <div class="fld">
+        <label class="lbl">Como quer que descrevam seu negócio? Até 3 adjetivos</label>
+        <div class="opts row">
+          <div class="opt" onclick="check(this,'p3_adj')"><div class="ob sq"></div>Profissional</div>
+          <div class="opt" onclick="check(this,'p3_adj')"><div class="ob sq"></div>Acolhedor</div>
+          <div class="opt" onclick="check(this,'p3_adj')"><div class="ob sq"></div>Moderno</div>
+          <div class="opt" onclick="check(this,'p3_adj')"><div class="ob sq"></div>Confiável</div>
+          <div class="opt" onclick="check(this,'p3_adj')"><div class="ob sq"></div>Exclusivo</div>
+          <div class="opt" onclick="check(this,'p3_adj')"><div class="ob sq"></div>Acessível</div>
+          <div class="opt" onclick="check(this,'p3_adj')"><div class="ob sq"></div>Especialista</div>
+          <div class="opt" onclick="check(this,'p3_adj')"><div class="ob sq"></div>Divertido</div>
+        </div>
+      </div>
+      <div class="fld"><label class="lbl">Principais concorrentes</label><textarea id="p3_conc" style="min-height:60px" placeholder="Ex: @salaoX no mesmo bairro. Cobram similar mas não têm minha especialidade."></textarea></div>
+    </div>
+    <div class="sec">
+      <div class="sec-ttl"><span class="sec-dot" style="background:#1878C8"></span>Conteúdo</div>
+      <div class="fld">
+        <label class="lbl">Você tem fotos ou vídeos de resultado?</label>
+        <div class="opts">
+          <div class="opt" onclick="radio(this,'p3_fotos')"><div class="ob"></div>Sim, bastante material</div>
+          <div class="opt" onclick="radio(this,'p3_fotos')"><div class="ob"></div>Tenho algumas fotos</div>
+          <div class="opt" onclick="radio(this,'p3_fotos')"><div class="ob"></div>Não tenho quase nada</div>
+        </div>
+      </div>
+      <div class="fld">
+        <label class="lbl">Tipos de post preferidos</label>
+        <div class="opts row">
+          <div class="opt" onclick="check(this,'p3_posts')"><div class="ob sq"></div>Dicas educativas</div>
+          <div class="opt" onclick="check(this,'p3_posts')"><div class="ob sq"></div>Antes e depois</div>
+          <div class="opt" onclick="check(this,'p3_posts')"><div class="ob sq"></div>Promoções</div>
+          <div class="opt" onclick="check(this,'p3_posts')"><div class="ob sq"></div>Bastidores</div>
+          <div class="opt" onclick="check(this,'p3_posts')"><div class="ob sq"></div>Depoimentos</div>
+          <div class="opt" onclick="check(this,'p3_posts')"><div class="ob sq"></div>Serviços</div>
+        </div>
+      </div>
+      <div class="fld"><label class="lbl">O que NÃO quer nos posts</label><textarea id="p3_post_nao" style="min-height:60px" placeholder="Ex: não quero aparecer em vídeo, não expor preços nas artes..."></textarea></div>
+    </div>
+    <div class="sec">
+      <div class="sec-ttl"><span class="sec-dot" style="background:#1878C8"></span>Plataformas de anúncio</div>
+      <div class="notice notice-blue">Selecione onde quer anunciar — configuramos e criamos campanhas em cada plataforma escolhida.</div>
+      <div class="fld">
+        <label class="lbl">Onde quer anunciar? <span class="req">*</span></label>
+        <div class="ads">
+          <div class="adc" id="c3m" onclick="ads('c3m','q3m')">
+            <div class="icon">📱</div>
+            <div><div class="aname">Meta Ads</div><div class="adesc">Instagram e Facebook — contatos, vendas locais e alcance.</div></div>
+          </div>
+          <div class="adc" id="c3g" onclick="ads('c3g','q3g')">
+            <div class="icon">🔍</div>
+            <div><div class="aname">Google Ads</div><div class="adesc">Aparecer quando pesquisam seu serviço — captura de demanda ativa.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cond" id="q3m">
+        <div class="cond-lbl">Meta Ads</div>
+        <div class="fld"><label class="lbl">Já anunciou no Instagram/Facebook?</label><div class="opts"><div class="opt" onclick="radio(this,'m3h')"><div class="ob"></div>Nunca anunciei</div><div class="opt" onclick="radio(this,'m3h')"><div class="ob"></div>Já impulsionei posts</div><div class="opt" onclick="radio(this,'m3h')"><div class="ob"></div>Já criei campanhas no Ads</div></div></div>
+        <div class="fld"><label class="lbl">Objetivo principal no Meta <span class="req">*</span></label><div class="opts"><div class="opt" onclick="radio(this,'m3o')"><div class="ob"></div>Mensagens no WhatsApp</div><div class="opt" onclick="radio(this,'m3o')"><div class="ob"></div>Atrair seguidores</div><div class="opt" onclick="radio(this,'m3o')"><div class="ob"></div>Divulgar promoção</div><div class="opt" onclick="radio(this,'m3o')"><div class="ob"></div>Ser conhecido na região</div><div class="opt" onclick="radio(this,'m3o')"><div class="ob"></div>Vendas diretas</div></div></div>
+        <div class="fld"><label class="lbl">Verba mensal para Meta Ads <span class="req">*</span></label><div class="hint">Valor que vai para a plataforma — separado do serviço.</div><div class="opts row"><div class="opt" onclick="radio(this,'m3v')"><div class="ob"></div>R$ 200–400</div><div class="opt" onclick="radio(this,'m3v')"><div class="ob"></div>R$ 400–700</div><div class="opt" onclick="radio(this,'m3v')"><div class="ob"></div>R$ 700–1.000</div><div class="opt" onclick="radio(this,'m3v')"><div class="ob"></div>Acima de R$ 1.000</div></div></div>
+        <div class="fld"><label class="lbl">Email do Facebook do negócio <span class="req">*</span></label><input type="email" id="m3_email" placeholder="email@exemplo.com"></div>
+        <div class="fld"><label class="lbl">Tem página do Facebook?</label><div class="opts row"><div class="opt" onclick="radio(this,'m3p')"><div class="ob"></div>Sim</div><div class="opt" onclick="radio(this,'m3p')"><div class="ob"></div>Não</div><div class="opt" onclick="radio(this,'m3p')"><div class="ob"></div>Não sei</div></div></div>
+      </div>
+      <div class="cond" id="q3g">
+        <div class="cond-lbl">Google Ads</div>
+        <div class="fld"><label class="lbl">Já anunciou no Google Ads?</label><div class="opts"><div class="opt" onclick="radio(this,'g3h')"><div class="ob"></div>Nunca anunciei</div><div class="opt" onclick="radio(this,'g3h')"><div class="ob"></div>Já anunciei antes</div><div class="opt" onclick="radio(this,'g3h')"><div class="ob"></div>Tenho conta ativa</div></div></div>
+        <div class="fld"><label class="lbl">Objetivo no Google Ads <span class="req">*</span></label><div class="opts"><div class="opt" onclick="radio(this,'g3o')"><div class="ob"></div>Aparecer quando pesquisam meu serviço (Search)</div><div class="opt" onclick="radio(this,'g3o')"><div class="ob"></div>Aparecer no Google Maps</div><div class="opt" onclick="radio(this,'g3o')"><div class="ob"></div>Banners em sites (Display)</div><div class="opt" onclick="radio(this,'g3o')"><div class="ob"></div>Vídeos no YouTube</div></div></div>
+        <div class="fld"><label class="lbl">Palavras que o cliente pesquisa para te encontrar</label><div class="hint">Ex: "salão zona sul SP", "eletricista barato", "nutricionista online"</div><textarea id="g3_kw" style="min-height:60px" placeholder="Liste as principais palavras-chave"></textarea></div>
+        <div class="fld"><label class="lbl">Verba mensal para Google Ads <span class="req">*</span></label><div class="opts row"><div class="opt" onclick="radio(this,'g3v')"><div class="ob"></div>R$ 300–600</div><div class="opt" onclick="radio(this,'g3v')"><div class="ob"></div>R$ 600–1.200</div><div class="opt" onclick="radio(this,'g3v')"><div class="ob"></div>R$ 1.200–2.000</div><div class="opt" onclick="radio(this,'g3v')"><div class="ob"></div>Acima de R$ 2.000</div></div></div>
+        <div class="fld"><label class="lbl">Email Google do negócio <span class="req">*</span></label><input type="email" id="g3_email" placeholder="email@gmail.com"></div>
+        <div class="fld"><label class="lbl">Você tem site? <span class="req">*</span></label><div class="opts"><div class="opt" onclick="radio(this,'g3s')"><div class="ob"></div>Sim, tenho site</div><div class="opt" onclick="radio(this,'g3s')"><div class="ob"></div>Uso landing page / link</div><div class="opt" onclick="radio(this,'g3s')"><div class="ob"></div>Não tenho — usar WhatsApp</div></div></div>
+        <div class="fld"><label class="lbl">URL do site ou landing page</label><input type="url" id="g3_url" placeholder="https://"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PKG 4 -->
+  <div id="f4" style="display:none">
+    <div class="sec">
+      <div class="sec-ttl"><span class="sec-dot" style="background:#534AB7"></span>Situação atual</div>
+      <div class="notice notice-purple">Contrato mínimo de 3 meses. Para quem já tem campanhas rodando ou finalizou o Pacote Autoridade.</div>
+      <div class="fld"><label class="lbl">O que você vende / oferece? <span class="req">*</span></label><textarea id="p4_servicos" placeholder="Descreva o negócio, produtos e serviços."></textarea></div>
+      <div class="fld"><label class="lbl">Situação das campanhas atuais <span class="req">*</span></label><div class="opts"><div class="opt" onclick="radio(this,'p4_camp')"><div class="ob"></div>Veio do Pacote Autoridade com vocês</div><div class="opt" onclick="radio(this,'p4_camp')"><div class="ob"></div>Configurei eu mesmo</div><div class="opt" onclick="radio(this,'p4_camp')"><div class="ob"></div>Configurou outra agência</div><div class="opt" onclick="radio(this,'p4_camp')"><div class="ob"></div>Ainda não tenho — precisaria criar</div></div></div>
+      <div class="fld"><label class="lbl">Resultados que quer nos próximos 3 meses <span class="req">*</span></label><textarea id="p4_meta" placeholder="Ex: 30 contatos novos/mês, reduzir custo por clique, dobrar agendamentos..."></textarea></div>
+      <div class="fld"><label class="lbl">Você tem imagens/vídeos para os criativos mensais?</label><div class="opts"><div class="opt" onclick="radio(this,'p4_cri')"><div class="ob"></div>Sim, envio sempre que precisar</div><div class="opt" onclick="radio(this,'p4_cri')"><div class="ob"></div>Tenho alguns, poucos</div><div class="opt" onclick="radio(this,'p4_cri')"><div class="ob"></div>Não tenho — vocês criam do zero</div></div></div>
+      <div class="fld"><label class="lbl">Frequência de atualizações desejada</label><div class="opts"><div class="opt" onclick="radio(this,'p4_freq')"><div class="ob"></div>Só relatório mensal</div><div class="opt" onclick="radio(this,'p4_freq')"><div class="ob"></div>Relatório + avisos de mudanças</div><div class="opt" onclick="radio(this,'p4_freq')"><div class="ob"></div>Acompanhamento semanal próximo</div></div></div>
+      <div class="fld"><label class="lbl">Datas ou campanhas especiais nos próximos 3 meses?</label><textarea id="p4_datas" style="min-height:60px" placeholder="Ex: Dia das Mães em maio, aniversário da loja em junho..."></textarea></div>
+    </div>
+    <div class="sec">
+      <div class="sec-ttl"><span class="sec-dot" style="background:#534AB7"></span>Plataformas de anúncio</div>
+      <div class="notice notice-purple">Selecione todas as plataformas para gerenciar.</div>
+      <div class="fld">
+        <label class="lbl">Onde anuncia ou quer anunciar? <span class="req">*</span></label>
+        <div class="ads">
+          <div class="adc" id="c4m" onclick="ads('c4m','q4m')">
+            <div class="icon">📱</div>
+            <div><div class="aname">Meta Ads</div><div class="adesc">Instagram e Facebook.</div></div>
+          </div>
+          <div class="adc" id="c4g" onclick="ads('c4g','q4g')">
+            <div class="icon">🔍</div>
+            <div><div class="aname">Google Ads</div><div class="adesc">Search, Display, Maps e YouTube.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cond" id="q4m">
+        <div class="cond-lbl">Meta Ads</div>
+        <div class="fld"><label class="lbl">ID ou nome da conta no Meta Business</label><input type="text" id="m4_id" placeholder="Ex: conta 'Bella Salão' ID #123456"></div>
+        <div class="fld"><label class="lbl">Email do Facebook responsável <span class="req">*</span></label><input type="email" id="m4_email" placeholder="email@exemplo.com"></div>
+        <div class="fld"><label class="lbl">Verba mensal atual para Meta <span class="req">*</span></label><div class="opts row"><div class="opt" onclick="radio(this,'m4v')"><div class="ob"></div>R$ 200–400</div><div class="opt" onclick="radio(this,'m4v')"><div class="ob"></div>R$ 400–700</div><div class="opt" onclick="radio(this,'m4v')"><div class="ob"></div>R$ 700–1.000</div><div class="opt" onclick="radio(this,'m4v')"><div class="ob"></div>Acima de R$ 1.000</div></div></div>
+        <div class="fld"><label class="lbl">Objetivo principal no Meta <span class="req">*</span></label><div class="opts"><div class="opt" onclick="radio(this,'m4o')"><div class="ob"></div>Mensagens no WhatsApp</div><div class="opt" onclick="radio(this,'m4o')"><div class="ob"></div>Clientes ao local físico</div><div class="opt" onclick="radio(this,'m4o')"><div class="ob"></div>Vendas online</div><div class="opt" onclick="radio(this,'m4o')"><div class="ob"></div>Geração de leads</div></div></div>
+        <div class="fld"><label class="lbl">O que não está funcionando nas campanhas atuais?</label><textarea id="m4_prob" style="min-height:60px" placeholder="Ex: custo por clique alto, público errado, criativo cansado..."></textarea></div>
+      </div>
+      <div class="cond" id="q4g">
+        <div class="cond-lbl">Google Ads</div>
+        <div class="fld"><label class="lbl">Email Google da conta de anúncios <span class="req">*</span></label><input type="email" id="g4_email" placeholder="email@gmail.com"></div>
+        <div class="fld"><label class="lbl">Situação da conta Google Ads</label><div class="opts"><div class="opt" onclick="radio(this,'g4c')"><div class="ob"></div>Ativa</div><div class="opt" onclick="radio(this,'g4c')"><div class="ob"></div>Inativa</div><div class="opt" onclick="radio(this,'g4c')"><div class="ob"></div>Não tenho</div></div></div>
+        <div class="fld"><label class="lbl">Tipos de campanha em uso ou desejados</label><div class="opts row"><div class="opt" onclick="check(this,'g4_tipos')"><div class="ob sq"></div>Search (texto)</div><div class="opt" onclick="check(this,'g4_tipos')"><div class="ob sq"></div>Display (banner)</div><div class="opt" onclick="check(this,'g4_tipos')"><div class="ob sq"></div>Google Maps</div><div class="opt" onclick="check(this,'g4_tipos')"><div class="ob sq"></div>YouTube</div><div class="opt" onclick="check(this,'g4_tipos')"><div class="ob sq"></div>Performance Max</div></div></div>
+        <div class="fld"><label class="lbl">Verba mensal para Google Ads <span class="req">*</span></label><div class="opts row"><div class="opt" onclick="radio(this,'g4v')"><div class="ob"></div>R$ 300–600</div><div class="opt" onclick="radio(this,'g4v')"><div class="ob"></div>R$ 600–1.200</div><div class="opt" onclick="radio(this,'g4v')"><div class="ob"></div>R$ 1.200–2.000</div><div class="opt" onclick="radio(this,'g4v')"><div class="ob"></div>Acima de R$ 2.000</div></div></div>
+        <div class="fld"><label class="lbl">URL do site / landing page <span class="req">*</span></label><input type="url" id="g4_url" placeholder="https://"></div>
+        <div class="fld"><label class="lbl">O que não está funcionando no Google Ads atual?</label><textarea id="g4_prob" style="min-height:60px" placeholder="Ex: palavras erradas, alto custo, pouco clique..."></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav"><button class="btn btn-back" onclick="ir(2)">← Voltar</button><button class="btn btn-next" onclick="ir4()">Continuar →</button></div>
+</div>
+
+<!-- ════ STEP 4 — ENVIO ════ -->
+<div class="pg" id="pg4">
+  <div class="dots">
+    <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot here"></div>
+    <span class="dot-lbl">Revisar e enviar</span>
+  </div>
+
+  <div class="sec">
+    <div class="sec-ttl"><span class="sec-dot" style="background:#1D9E75"></span>Resumo do briefing</div>
+    <div id="resumo"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-ttl"><span class="sec-dot" style="background:#1a1a1a"></span>Para finalizar</div>
+    <div class="fld"><label class="lbl">Qual sua maior expectativa com este projeto?</label><textarea id="f_exp" placeholder="O que seria o resultado ideal? O que mudaria no seu negócio?"></textarea></div>
+    <div class="fld"><label class="lbl">Tem alguma data limite ou urgência?</label><input type="text" id="f_prazo" placeholder="Ex: preciso para 10/05, ou 'sem pressa'"></div>
+    <div class="fld"><label class="lbl">Algo mais que devo saber?</label><textarea id="f_obs" style="min-height:60px" placeholder="Qualquer informação adicional..."></textarea></div>
+    <div class="fld">
+      <label class="lbl">Como prefere receber o retorno? <span class="req">*</span></label>
+      <div class="opts row">
+        <div class="opt" onclick="radio(this,'retorno')"><div class="ob"></div>WhatsApp</div>
+        <div class="opt" onclick="radio(this,'retorno')"><div class="ob"></div>Email</div>
+        <div class="opt" onclick="radio(this,'retorno')"><div class="ob"></div>Tanto faz</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice notice-blue">Após o envio, entraremos em contato <strong>em até 24h</strong> pelo WhatsApp para confirmar e iniciar o projeto.</div>
+
+  <div class="nav">
+    <button class="btn btn-back" onclick="ir(3)">← Voltar</button>
+    <button class="btn btn-submit" id="btnEnviar" onclick="enviar()">Enviar briefing →</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success" id="tela-ok">
+  <div class="ok-icon">✓</div>
+  <h2>Briefing enviado!</h2>
+  <p>Recebemos tudo com sucesso.<br><br>Entraremos em contato pelo WhatsApp informado <strong>em até 24 horas</strong> para confirmar e iniciar o projeto.</p>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────
+var pkgSel = null;
+var radioState = {};   // group -> selected element
+var checkState = {};   // group -> [selected elements]
+var corState = [];
+
+// ── PROGRESS ──────────────────────────────────────────
+function setProg(s){
+  document.getElementById('prog').style.width = ((s-1)/3*100) + '%';
+}
+
+// ── NAVIGATION ────────────────────────────────────────
+function ir(n){
+  document.querySelectorAll('.pg').forEach(function(p){ p.classList.remove('on'); });
+  document.getElementById('pg'+n).classList.add('on');
+  setProg(n);
+  window.scrollTo(0,0);
+}
+
+function ir3(){
+  var nome = document.getElementById('f-nome').value.trim();
+  var neg  = document.getElementById('f-neg').value.trim();
+  var wp   = document.getElementById('f-wp').value.trim();
+  var em   = document.getElementById('f-email').value.trim();
+  if(!nome || !neg || !wp || !em){
+    alert('Preencha os campos obrigatórios: Nome, Negócio, WhatsApp e Email.');
+    return;
+  }
+  // show correct package fields
+  ['1','2','3','4'].forEach(function(p){
+    var el = document.getElementById('f'+p);
+    el.style.display = (p === pkgSel) ? 'block' : 'none';
+  });
+  var lbls = {'1':'Identidade visual e marca','2':'Presença digital','3':'Posicionamento e anúncios','4':'Plataformas e gestão'};
+  document.getElementById('lbl3').textContent = lbls[pkgSel] || 'Detalhes';
+  ir(3);
+}
+
+function ir4(){
+  buildResumo();
+  ir(4);
+}
+
+// ── PACKAGE SELECTION ─────────────────────────────────
+function selPkg(p, el){
+  ['1','2','3','4'].forEach(function(n){
+    document.getElementById('pk'+n).classList.remove('on');
+    document.getElementById('chk'+n).textContent = '';
+  });
+  el.classList.add('on');
+  document.getElementById('chk'+p).textContent = '✓';
+  pkgSel = p;
+  document.getElementById('btn1').disabled = false;
+}
+
+// ── RADIO BUTTONS ─────────────────────────────────────
+function radio(el, group){
+  // deselect previous in group
+  if(radioState[group]){
+    radioState[group].classList.remove('on');
+  }
+  el.classList.add('on');
+  radioState[group] = el;
+}
+
+// ── CHECKBOXES ────────────────────────────────────────
+function check(el, group){
+  el.classList.toggle('on');
+  if(!checkState[group]) checkState[group] = [];
+  var idx = checkState[group].indexOf(el);
+  if(idx >= 0){
+    checkState[group].splice(idx,1);
+  } else {
+    checkState[group].push(el);
+  }
+}
+
+// ── COLOR SWATCHES ────────────────────────────────────
+function cor(el){
+  if(el.classList.contains('on')){
+    el.classList.remove('on');
+    var i = corState.indexOf(el);
+    if(i >= 0) corState.splice(i,1);
+  } else {
+    if(corState.length >= 3){ alert('Selecione no máximo 3 cores.'); return; }
+    el.classList.add('on');
+    corState.push(el);
+  }
+}
+
+// ── ADS TOGGLE ────────────────────────────────────────
+function ads(cardId, qId){
+  var card = document.getElementById(cardId);
+  var qs   = document.getElementById(qId);
+  card.classList.toggle('on');
+  qs.classList.toggle('on', card.classList.contains('on'));
+}
+
+// ── COLLECT DATA ──────────────────────────────────────
+function val(id){ var e = document.getElementById(id); return e ? e.value.trim() : ''; }
+function getRadio(group){ return radioState[group] ? radioState[group].textContent.trim() : ''; }
+function getChecks(group){
+  if(!checkState[group]) return '';
+  return checkState[group].map(function(e){ return e.textContent.trim(); }).join(', ');
+}
+function getCores(){
+  return corState.map(function(e){ return e.getAttribute('data-cor'); }).join(', ');
+}
+
+function collect(){
+  var pkgNames = {'1':'Identidade Express','2':'Presença Digital','3':'Autoridade Digital','4':'Gestão de Tráfego'};
+  var d = {
+    'Pacote selecionado': pkgNames[pkgSel] || '',
+    'Nome completo':      val('f-nome'),
+    'Negócio':            val('f-neg'),
+    'WhatsApp':           val('f-wp'),
+    'Email':              val('f-email'),
+    'Cidade':             val('f-cidade'),
+    'Segmento':           val('f-seg'),
+    'Tempo de negócio':   getRadio('tempo'),
+    'Como chegou':        getRadio('origem'),
+    'Expectativa':        val('f_exp'),
+    'Prazo':              val('f_prazo'),
+    'Observações':        val('f_obs'),
+    'Preferência de retorno': getRadio('retorno'),
+  };
+
+  if(pkgSel === '1'){
+    d['[P1] Serviços / produtos']   = val('p1_servicos');
+    d['[P1] Cliente ideal']         = val('p1_cliente');
+    d['[P1] Diferencial']           = val('p1_diferencial');
+    d['[P1] Faixa de preço']        = getRadio('p1_preco');
+    d['[P1] Tem logo?']             = getRadio('p1_temlogo');
+    d['[P1] Estilo visual']         = getRadio('p1_estilo');
+    d['[P1] Cores favoritas']       = getCores();
+    d['[P1] Cores que NÃO quer']    = val('p1_cores_nao');
+    d['[P1] Referências de marca']  = val('p1_refs');
+    d['[P1] Não quer no logo']      = val('p1_nao');
+    d['[P1] Personalidade da marca']= val('p1_pessoa');
+    d['[P1] Onde usar o logo']      = getChecks('p1_uso');
+    d['[P1] Link de referência']    = val('p1_link');
+    d['[P1] Informações extras']    = val('p1_extra');
+  }
+  if(pkgSel === '2'){
+    d['[P2] Serviços / produtos']   = val('p2_servicos');
+    d['[P2] Cliente ideal']         = val('p2_cliente');
+    d['[P2] Diferencial']           = val('p2_diferencial');
+    d['[P2] Atendimento']           = getRadio('p2_atend');
+    d['[P2] Horário']               = val('p2_horario');
+    d['[P2] Endereço']              = val('p2_end');
+    d['[P2] Site']                  = val('p2_site');
+    d['[P2] Tem logo?']             = getRadio('p2_logo');
+    d['[P2] Estilo visual']         = getRadio('p2_estilo');
+    d['[P2] Cores e referências']   = val('p2_cores');
+    d['[P2] Instagram @']           = val('p2_ig');
+    d['[P2] Descrição da bio']      = val('p2_bio');
+    d['[P2] Destaques Instagram']   = val('p2_dest');
+    d['[P2] Link da bio']           = getRadio('p2_link');
+    d['[P2] Tem fotos?']            = getRadio('p2_fotos');
+    d['[P2] Templates desejados']   = getChecks('p2_tmpl');
+    d['[P2] Email Google']          = val('p2_gemail');
+    d['[P2] Google Meu Negócio']    = getRadio('p2_gmn');
+    d['[P2] Situação endereço']     = getRadio('p2_endereco');
+  }
+  if(pkgSel === '3'){
+    d['[P3] Serviços / produtos']   = val('p3_servicos');
+    d['[P3] Preço médio']           = val('p3_preco');
+    d['[P3] Cliente ideal']         = val('p3_cliente');
+    d['[P3] Dor principal']         = val('p3_dor');
+    d['[P3] Diferencial']           = val('p3_dif');
+    d['[P3] Adjetivos da marca']    = getChecks('p3_adj');
+    d['[P3] Concorrentes']          = val('p3_conc');
+    d['[P3] Tem fotos?']            = getRadio('p3_fotos');
+    d['[P3] Tipos de post']         = getChecks('p3_posts');
+    d['[P3] Não quer nos posts']    = val('p3_post_nao');
+    if(document.getElementById('c3m').classList.contains('on')){
+      d['[Meta] Histórico']         = getRadio('m3h');
+      d['[Meta] Objetivo']          = getRadio('m3o');
+      d['[Meta] Verba mensal']      = getRadio('m3v');
+      d['[Meta] Email Facebook']    = val('m3_email');
+      d['[Meta] Tem página FB?']    = getRadio('m3p');
+    }
+    if(document.getElementById('c3g').classList.contains('on')){
+      d['[Google] Histórico']       = getRadio('g3h');
+      d['[Google] Objetivo']        = getRadio('g3o');
+      d['[Google] Keywords']        = val('g3_kw');
+      d['[Google] Verba mensal']    = getRadio('g3v');
+      d['[Google] Email Google']    = val('g3_email');
+      d['[Google] Tem site?']       = getRadio('g3s');
+      d['[Google] URL']             = val('g3_url');
+    }
+  }
+  if(pkgSel === '4'){
+    d['[P4] Serviços / produtos']   = val('p4_servicos');
+    d['[P4] Situação campanhas']    = getRadio('p4_camp');
+    d['[P4] Meta 3 meses']         = val('p4_meta');
+    d['[P4] Tem criativos?']        = getRadio('p4_cri');
+    d['[P4] Frequência updates']    = getRadio('p4_freq');
+    d['[P4] Datas especiais']       = val('p4_datas');
+    if(document.getElementById('c4m').classList.contains('on')){
+      d['[Meta] ID conta']          = val('m4_id');
+      d['[Meta] Email Facebook']    = val('m4_email');
+      d['[Meta] Verba mensal']      = getRadio('m4v');
+      d['[Meta] Objetivo']          = getRadio('m4o');
+      d['[Meta] Problema atual']    = val('m4_prob');
+    }
+    if(document.getElementById('c4g').classList.contains('on')){
+      d['[Google] Email Google']    = val('g4_email');
+      d['[Google] Situação conta']  = getRadio('g4c');
+      d['[Google] Tipos campanha']  = getChecks('g4_tipos');
+      d['[Google] Verba mensal']    = getRadio('g4v');
+      d['[Google] URL']             = val('g4_url');
+      d['[Google] Problema atual']  = val('g4_prob');
+    }
+  }
+
+  // remove empty
+  Object.keys(d).forEach(function(k){ if(!d[k]) delete d[k]; });
+  return d;
+}
+
+// ── RESUMO ────────────────────────────────────────────
+function buildResumo(){
+  var pkgNames = {'1':'Identidade Express','2':'Presença Digital','3':'Autoridade Digital','4':'Gestão de Tráfego'};
+  var rows = [
+    ['Pacote', pkgNames[pkgSel] || '—'],
+    ['Nome', val('f-nome') || '—'],
+    ['Negócio', val('f-neg') || '—'],
+    ['WhatsApp', val('f-wp') || '—'],
+    ['Email', val('f-email') || '—'],
+    ['Cidade', val('f-cidade') || '—'],
+    ['Segmento', val('f-seg') || '—'],
+  ];
+  document.getElementById('resumo').innerHTML = rows.map(function(r){
+    return '<p><strong>' + r[0] + ':</strong> ' + r[1] + '</p>';
+  }).join('');
+}
+
+// ── SUBMIT ────────────────────────────────────────────
+var EMAILJS_SERVICE_ID  = 'service_1cl89dq';
+var EMAILJS_TEMPLATE_ID = 'template_irxjul9';
+var EMAILJS_PUBLIC_KEY  = 'lvViBEh3AwpOWBnu4';
+
+function enviar(){
+  var btn = document.getElementById('btnEnviar');
+  var nome = val('f-nome');
+  if(!nome){
+    alert('Preencha o Nome no passo 2 antes de enviar.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  var pkgNames = {'1':'Identidade Express','2':'Presença Digital','3':'Autoridade Digital','4':'Gestão de Tráfego'};
+  var data = collect();
+
+  // Build readable email body
+  var lines = [];
+  Object.keys(data).forEach(function(k){
+    var v = Array.isArray(data[k]) ? data[k].join(', ') : data[k];
+    if(v) lines.push(k + ': ' + v);
+  });
+
+  var params = {
+    nome:    val('f-nome') || 'Não informado',
+    pacote:  pkgNames[pkgSel] || 'Não informado',
+    message: lines.join('\n')
+  };
+
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params)
+    .then(function(response){
+      console.log('EmailJS OK', response);
+      mostrarSucesso();
+    }, function(error){
+      console.error('EmailJS FAIL', error);
+      btn.disabled = false;
+      btn.textContent = 'Enviar briefing →';
+      alert('Erro ao enviar: ' + (error.text || JSON.stringify(error)) + '\n\nVerifique sua conexão e tente novamente.');
+    });
+}
+
+function mostrarSucesso(){
+  document.querySelectorAll('.pg').forEach(function(p){ p.style.display='none'; });
+  document.querySelector('.prog-wrap').style.display = 'none';
+  document.getElementById('tela-ok').style.display = 'block';
+  window.scrollTo(0,0);
+}
+
+setProg(1);
+</script>
+</body>
+</html>
